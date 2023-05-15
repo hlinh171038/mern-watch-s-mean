@@ -12,6 +12,7 @@ function MultipleItems () {
   
     const {blogs,dispatchBlog,carts} = useGlobalContext()
     const [err,setErr]  = useState('')
+    const [carouselData,setCarouselData] = useState(null)
     const {blog,error,loading} = blogs
     console.log(blog)
 
@@ -21,6 +22,7 @@ function MultipleItems () {
         .then(res=>{
             console.log(res.data)
             const {data } = res;
+            setCarouselData(data)
             dispatchBlog({type:'FETCH_SUCCESS',payload:data})
         }).catch(err =>{
             console.log(err)
@@ -29,6 +31,7 @@ function MultipleItems () {
 },[])
 
    console.log(blogs)
+   console.log(carouselData)
     const settings = {
       dots: true,
       infinite: true,
@@ -70,7 +73,7 @@ function MultipleItems () {
                     <div className="container">
                     <h2 className="text-white text-center mt-3 mb-3"> Our Blog</h2>
                     <Slider {...settings} className="">
-                      {blog && [...blog].reverse().slice(0,8).map(item =>{
+                      {carouselData && [...carouselData].reverse().slice(0,8).map(item =>{
                         return <div className="d-flex justify-content-center">
                                     <Card
                                         style={{

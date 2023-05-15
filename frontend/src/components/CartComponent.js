@@ -31,7 +31,9 @@ function CartComponent() {
   return <div className='container mb-5 mt-3 ' style={{height:"auto",minHeight:"500px"}}>
              <div className='text-center mt-3'><h1 ><span className='' style={{color:"#685f52"}}>Shopping</span> Cart</h1></div>
              {carts.cart.length === 0? (
-                  <div className='color-light fw-5 text-center mt-5 ' style={{marginBottom:"7rem"}}>Cart is empty. <Link to="/" className=' text-light text-decoration-none   rounded-pill ' style={{padding:".5rem 1rem",background:"#685f52"}}>Home Pages</Link></div>
+                  <div className='color-light fw-5 text-center mt-5 ' style={{marginBottom:"7rem"}}>Cart is empty. 
+                    <Link to="/" className=' text-light text-decoration-none   btn_all_web ' style={{padding:".5rem 1rem",background:"#685f52"}}>Home Pages</Link>
+                  </div>
                 ):(
             <Row>
               <Col md={8}>

@@ -4,32 +4,50 @@ import { compareAsc, format } from 'date-fns'
 import { Link, useParams } from 'react-router-dom'
 import { Card, CardBody, Col, Container, Row } from 'reactstrap'
 import { useGlobalContext } from '../context'
+import Loading from './Loading'
 
 function BlogDetailComponent() {
-    const {blogs} = useGlobalContext()
-    const [blogData,setBlogDdata] = useState([])
+    const {dispatchBlog} = useGlobalContext()
+    const [blogData,setBlogData] = useState([])
+    const [blogs,setBlogs] =useState(null)
     const now = format(new Date(), 'yyyy-MM-dd');
     const custTime = '18:00:00.000';
     const custDt = new Date(`${now} ${custTime}`);
     const param = useParams()
     const {id} = param
-
+    const [loadingPage,setLoadingPage] = useState(true)
     const {title,cover,createdAt,summary,content} = blogData
-    const {blog,error,loading} = blogs
-    console.log(blog)
+    // const {blog,error,loading} = blogs
+    console.log('blog')
     useEffect(()=>{
         axios.get(`${process.env.REACT_APP_API}/api/blog/${id}`)
         .then(res =>{
             const {data } =res;
             console.log(data)
-            setBlogDdata(data)
+            setBlogData(data)
         }).catch(error =>{
             console.log(error)
         })
     },[])
+    useEffect(()=>{
+        setLoadingPage(false)
+        dispatchBlog({type:'FETCH_REQUEST'})
+        axios.get(`${process.env.REACT_APP_API}/api/blog`)
+            .then(res=>{
+                console.log(res.data)
+                const {data } = res;
+                setBlogs(data)
+                setLoadingPage(true)   
+                dispatchBlog({type:'FETCH_SUCCESS',payload:data})
+            }).catch(err =>{
+                setLoadingPage(false)
+                dispatchBlog({type:'FETCH_FAIL',payload:err})
+            })
+    },[])
   return (
     
     <div style={{overflow:"hidden"}} className='container mt-5 mb-3'>
+        {!loadingPage ? <Loading/>:
         <Row  >
         <Col md={9} id='blog__detail_col1__cover'  >
             <div className='square border p-3 blog__detail__col1'>
@@ -63,7 +81,7 @@ function BlogDetailComponent() {
             <div id='blog__detail__border'>
                 <h3 className='text-uppercase ms-1'>you may <span style={{color:"#cbba9c"}}>be like</span></h3>
                 <div className='border p-3 ' style={{background:"rgb(203 186 156 / 33%)"}}>
-                {blog && [...blog].reverse().map(item=> {
+                {blogs && [...blogs].reverse().map(item=> {
                     return <CardBody className='d-flex align-items-center mb-3' >
                                     <div className='square bg-primary rounded-circle blog__detail__img_round__cover  '>
                                         <img src={`${process.env.REACT_APP_API}/`+item.cover}
@@ -82,6 +100,7 @@ function BlogDetailComponent() {
             
         </Col>
     </Row>
+        }
     </div>
   )
 }

@@ -34,18 +34,19 @@ function DetailHistoryComponent() {
       <h1 className="my-3 text-center mb-5"> <span style={{color:"#cbba9c"}}>Detail</span> Order {id}</h1>
         {loading ? <Loading/>:error ? <Alert color="danger">{error}</Alert>:
       <Row>
+        <Link to='/dashboard'> Dashboard </Link>
         <Col md={8}>
             <Card className='mb-3'>
                 <CardBody>
                     <CardTitle>Shipping</CardTitle>
                     <CardText>
                        
-                        <strong>Name:</strong> { adminOrder.length!==0 && adminOrder.shippingAddress.fullname} <br/>
+                        <strong>Name:</strong> { orders.length!==0 && orders.shippingAddress.fullname} <br/>
                         <strong>Address:</strong>
-                        {adminOrder.length!==0 && adminOrder.shippingAddress.address},
-                        {adminOrder.length!==0 && adminOrder.shippingAddress.city},
-                        {adminOrder.length!==0 && adminOrder.shippingAddress.country}  <br/>
-                        <strong>Code Ship:</strong>{adminOrder.length!==0 && adminOrder.shippingAddress.postalCode} <br/>
+                        {orders.length!==0 && orders.shippingAddress.address},
+                        {orders.length!==0 && orders.shippingAddress.city},
+                        {orders.length!==0 && orders.shippingAddress.country}  <br/>
+                        <strong>Code Ship:</strong>{orders.length!==0 && orders.shippingAddress.postalCode} <br/>
                     </CardText>
                    
                 </CardBody>
@@ -56,7 +57,7 @@ function DetailHistoryComponent() {
                         Payment
                     </CardTitle>
                     <CardText>
-                        <strong>Method:</strong> {adminOrder.length!==0 && adminOrder.paymentMethod}
+                        <strong>Method:</strong> {orders.length!==0 && orders.paymentMethod}
                     </CardText>
                     
                 </CardBody>
@@ -67,7 +68,7 @@ function DetailHistoryComponent() {
                         Delivery
                     </CardTitle>
                     <CardText>
-                        <strong>Delivery:</strong> {adminOrder.length!==0 && (adminOrder.isDelivered ?'Delivery by LEX VN':'Not Delivery')}
+                        <strong>Delivery:</strong> {orders.length!==0 && (orders.isDelivered ?'Delivery by LEX VN':'Not Delivery')}
                         
                     </CardText>
                     
@@ -79,7 +80,7 @@ function DetailHistoryComponent() {
                         Time
                     </CardTitle>
                     <CardText>
-                        <strong>Bought:</strong> {adminOrder.length!==0 && (format(new Date(adminOrder.createdAt), 'dd-MM-yyyy HH ') +'h')}
+                        <strong>Bought:</strong> {orders.length!==0 && (format(new Date(orders.createdAt), 'dd-MM-yyyy HH ') +'h')}
                         
                     </CardText>
                     
@@ -89,7 +90,7 @@ function DetailHistoryComponent() {
                 <CardBody>
                     <CardTitle>Items</CardTitle>
                     <ListGroup>
-                        {adminOrder.length!==0 && adminOrder.orderItems.map(item =>{
+                        {orders.length!==0 && orders.orderItems.map(item =>{
                             return <ListGroupItem key={item._id}>
                                     <Row className='align-items-center'>
                                         <Col md={6}>
@@ -116,19 +117,19 @@ function DetailHistoryComponent() {
                         <ListGroupItem>
                             <Row>
                                 <Col>Items</Col>
-                                <Col>{adminOrder.length!==0 && adminOrder.itemsPrice} VNĐ</Col>
+                                <Col>{orders.length!==0 && orders.itemsPrice} VNĐ</Col>
                             </Row>
                         </ListGroupItem>
                         <ListGroupItem>
                             <Row>
                                 <Col>Shipping</Col>
-                                <Col>{adminOrder.length!==0 && adminOrder.shippingPrice} VNĐ</Col>
+                                <Col>{orders.length!==0 && orders.shippingPrice} VNĐ</Col>
                             </Row>
                         </ListGroupItem>
                         <ListGroupItem>
                             <Row>
                                 <Col>Tax</Col>
-                                <Col>{adminOrder.length!==0 && adminOrder.taxPrice} VNĐ</Col>
+                                <Col>{orders.length!==0 && orders.taxPrice} VNĐ</Col>
                             </Row>
                         </ListGroupItem>
                         <ListGroupItem>
@@ -136,7 +137,7 @@ function DetailHistoryComponent() {
                                 <Col>
                                     <strong>Order Total</strong>
                                 </Col>
-                                <Col>{adminOrder.length!==0 && adminOrder.totalPrice} VNĐ</Col>
+                                <Col>{orders.length!==0 && orders.totalPrice} VNĐ</Col>
                             </Row>
                         </ListGroupItem>
                     </ListGroup>

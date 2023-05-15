@@ -776,12 +776,12 @@ li{
   position:relative
 }
 .slider_down_right_img{
-  margin-left:-1rem;
-
- background-position: center;
-  height:450px;
-  max-height:450px;
+  margin-left: 0 !important;
+  background-position: center;
+  height: 450px;
+  max-height: 450px;
   transition: all 1s ease;
+  width: 100%;
 }
 .slider_down_right_img:hover{
  transform: scale(1.2);

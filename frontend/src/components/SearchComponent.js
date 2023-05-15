@@ -53,11 +53,14 @@ const prices =[
 ]
 
 function SearchComponent() {
-    const {dispatchSearch,searchs,productFilter,setProductFilter,searchProduct,setSearchProduct,errorSearch,setError} = useGlobalContext()
-    const {error,products,loading,countProducts,pages} = searchs
+    const {dispatchSearch,errorSearch,setError,searchResult,} = useGlobalContext()
+    // const {error,products,loading,countProducts,pages} = searchs
     const [currentPage,setCurrentPage] = useState(1)
     const [postPerPage,setPostPerPage] = useState('8')
     const [categories,setCategories] = useState([])
+    const [rootData,setRootData] = useState(null)
+    const [productData,setProductData] =useState(null)
+    // const [errorSearchPage,setErrorSearchPage] = useState(errorSearch)
     const [category,setCategory] =useState('Any')
     const [price,setPrice] =useState('Any')
     const [rating,setRating] = useState('Any')
@@ -66,37 +69,42 @@ function SearchComponent() {
     const [resetBtn,setResetBtn] = useState(false)
     const [sort, setSort] = useState('');
     
+
+    
     // pagination 
-    console.log(productFilter)
-    const total = productFilter.length;
+    console.log(errorSearch)
+    console.log(productData)
+    const total = productData && productData.length;
     const lastIndex = currentPage *postPerPage;
     const firstIndex = lastIndex - postPerPage;
     let pagesPagin = []
     for(let i=1;i <=Math.ceil(total/postPerPage);i++){
       pagesPagin.push(i);
     }
-    console.log(pages)
+    
     // filter 
     const handleFilterCategory = (currentCategory) =>{
+      setCurrentPage(1)
       setResetBtn(true)
       setCategory(currentCategory)
       if(currentCategory === 'Any'){
-        setProductFilter(searchProduct);
+        setProductData(rootData);
         return;
       }
       for(let i=0;i<categories.length;i++){
         if(categories[i] === currentCategory){
-          const cate = searchProduct.filter(item =>item.category === currentCategory)
-          setProductFilter(cate)
+          const cate = rootData.filter(item =>item.category === currentCategory)
+          setProductData(cate)
         }
       }
     }
    // price
     const handleFilterPrice = (currentPrice) =>{
+      setCurrentPage(1)
       setResetBtn(true)
       setPrice(currentPrice)
       if(currentPrice === 'Any'){
-        setProductFilter(searchProduct);
+        setProductData(rootData);
         return;
       }
       const result = currentPrice.split('-');
@@ -104,21 +112,22 @@ function SearchComponent() {
      for(let i=0;i<prices.length;i++){
       if(currentPrice === prices[i].value){
         console.log('try')
-        const data = searchProduct.filter(item =>{
+        const data = rootData.filter(item =>{
           return item.price >result[0] && item.price <result[1]
         })
-        setProductFilter(data)
+        setProductData(data)
       }
      }
     }
     //rating
     const handleRating = (currentRating) =>{
+      setCurrentPage(1)
       setResetBtn(true)
       setRating(currentRating)
        for(let i=0;i<ratingArr.length;i++){
         if(ratingArr[i].rating === currentRating){
-          const data = searchProduct.filter(item => item.rating >=currentRating)
-          setProductFilter(data)
+          const data = rootData.filter(item => item.rating >=currentRating)
+          setProductData(data)
         }
        }
     }
@@ -126,48 +135,49 @@ function SearchComponent() {
    
     //order
     const handleOrder = (e) =>{
+      setCurrentPage(1)
       setResetBtn(true)
       let orderValue = e.target.value;
       setSort(e.target.value)
       switch(orderValue){
         case 'newest':
-          const coppyDataN = [...searchProduct];
+          const coppyDataN = [...rootData];
           coppyDataN.sort((a,b)=>{
             if(a.updatedAt <b.updatedAt) return 1;
             if(a.updatedAt >b.updatedAt) return -1;
             return 0;
           });
-          setProductFilter(coppyDataN);
+          setProductData(coppyDataN);
           break;
         case 'lower':
-          const coppyDataL =[...searchProduct];
+          const coppyDataL =[...rootData];
           coppyDataL.sort((a,b)=>{
             if(a.price >b.price) return 1;
             if(a.price <b.price) return -1;
             return 0;
           });
-          setProductFilter(coppyDataL);
+          setProductData(coppyDataL);
           break;
         case 'higher':
-          const coppyDataH =[...searchProduct];
+          const coppyDataH =[...rootData];
           coppyDataH.sort((a,b)=>{
             if(a.price <b.price) return 1;
             if(a.price >b.price) return -1;
             return 0;
           });
-          setProductFilter(coppyDataH);
+          setProductData(coppyDataH);
           break;
         case 'avg':
-          const coppyDataA =[...searchProduct];
+          const coppyDataA =[...rootData];
           coppyDataA.sort((a,b)=>{
             if(a.rating <b.rating) return 1;
             if(a.rating >b.rating) return -1;
             return 0;
           });
-          setProductFilter(coppyDataA);
+          setProductData(coppyDataA);
           break;
         default:
-          setProductFilter([]);
+          setProductData([]);
           return ;
       }
     }
@@ -176,15 +186,30 @@ function SearchComponent() {
       setCategory('Any')
       setPrice('Any')
       setRating('Any')
-      setProductFilter(searchProduct)
+      setProductData(rootData)
       setResetBtn(false)
     }
   
 // handle close error
     const handleCloseX = ()=>{
       setError('')
-      setProductFilter(searchProduct)
+      setProductData(rootData)
     }
+
+    useEffect(()=>{
+      dispatchSearch({type:"FETCH_REQUEST"})
+      axios.get(
+          `${process.env.REACT_APP_API}/api/products/search`
+      ).then(res =>{
+          const {data} = res;
+          console.log(data)
+          dispatchSearch({type:"FETCH_SUCCESS",payload:data})
+         setRootData(data)
+         setProductData(data)
+      }).catch (err=>{
+          dispatchSearch({type:"FETCH_FAIL",payload:err})
+      })
+  }, [ ])
 
     useEffect(()=>{
         axios.get(`${process.env.REACT_APP_API}/api/products/catagories`)
@@ -196,6 +221,13 @@ function SearchComponent() {
              })
 
     },[dispatchSearch])
+    useEffect(()=>{
+
+    },[])
+    //search
+    useEffect(()=>{
+      setProductData(searchResult )
+    },[searchResult])
   return (
       <Row  className='' >
         <Col md={3} className=' ' style={{minHeight:"100vh",background:"rgba(203, 186, 156, 0.33)"}}>
@@ -247,11 +279,11 @@ function SearchComponent() {
             <Row  className="justify-content-between mb-3">
               <Col md={6} sm={6}>
                {resetBtn &&  <div style={{marginLeft:'1rem'}} >
-                  {productFilter.length === 0 ? 'No' : productFilter.length } Results
+                  {productData && productData.length === 0 ? 'No' : productData && productData.length } Results
                   {category !=='Any'&& ' : '+ category}
                   {price !=="Any" && " : " +price}
                   {rating !=="Any" && " : "+ rating +'star'} 
-                  {productFilter.legnth !== 0 ?
+                  {productData.legnth !== 0 ?
                   <button className='bg-light text-dark border-0 my-3 m-3'  onClick={handleReset}>
                     <i className="fas fa-times-circle"></i>
                   </button>: null}
@@ -293,7 +325,7 @@ function SearchComponent() {
             <Row className='p-3'>
               <Col md={12} sm={12}>
               <h1 className='text-center'><span style={{color:"#cbba9c"}}>Featured</span> Products</h1>
-                {loading ?<Loading/>:(error  ?<div>{error}</div>:
+                {/* {loading ?<Loading/>:(error  ?<div>{error}</div>: */}
                <Row  className='mt-3'>
                   {/* { errorSearch ?<Alert color='danger'>{errorSearch}</Alert>:productFilter.length !==0 ?
                    productFilter.slice(firstIndex,lastIndex).map(product =>{
@@ -308,7 +340,7 @@ function SearchComponent() {
                       </button>
 
                     </Alert>:
-                   productFilter && productFilter.slice(firstIndex,lastIndex).map(product =>{
+                   productData && productData.slice(firstIndex,lastIndex).map(product =>{
                     return <Product key={product._id} {...product}/>
                   })}
                  <nav aria-label="Page navigation example">
@@ -321,7 +353,8 @@ function SearchComponent() {
                       <li class="page-item"><a class="page-link" href="#">Next</a></li>
                   </ul>
                   </nav>
-              </Row>)}
+              </Row>
+              {/* )} */}
               </Col>
                 
             </Row>

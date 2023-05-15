@@ -195,11 +195,11 @@ function AdminUserInfoComponent() {
                             <td className='text-center'>{item.orderItems.length}</td>
                             <td  className='text-center'>{item.totalPrice} vnd</td>
                             <td  className='text-center'>{item.shippingAddress.address},{item.shippingAddress.city}</td>
-                            <td  className='text-center'>
-                                <Link  to={`/dashboard/${item._id}`} className='text-decoration-none text-light' >
-                                       <button className='nav_search_btn mt-1 mb-1 '>
+                            <td  className='text-center pt-3 pb-3'>
+                                <Link  to={`/dashboard/${item._id}`} className='text-decoration-none text-light nav_search_btn ' >
+                                      
                                           Detail
-                                        </button>
+                                       
                                 </Link> 
                             </td>
                         </tr>

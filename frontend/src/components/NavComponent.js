@@ -23,7 +23,7 @@ import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 function NavComponent() {
-  const {carts,dispatchCart,search,setSearch,searchProduct,setProductFilter,setError} = useGlobalContext();
+  const {carts,dispatchCart,search,setSearch,searchProduct,setProductFilter,setError,searchResult,setSearchResult} = useGlobalContext();
   const [fix,setFix] =useState(false);
   const [scroll,setScroll] = useState(false)
   let navRef = useRef()
@@ -78,7 +78,7 @@ function NavComponent() {
     if(result.length === 0){
         setError('YOUR PRODUCT NOT EXIST ! TRY OTHER PRODUCT')
     }
-    setProductFilter(result);
+    setSearchResult(result)
     setSearch('')
    navigate('/search')
 }

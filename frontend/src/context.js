@@ -78,6 +78,7 @@ const AppProvider = ({children})=>{
     const [productFilter,setProductFilter] = useState([])
     const [errorSearch,setError] = useState('')
     const [search,setSearch] =useState('')
+    const [searchResult,setSearchResult] = useState([])
     //add to cart
     const addToCart = async(id)=>{
         
@@ -109,6 +110,7 @@ const AppProvider = ({children})=>{
             dispatchSearch({type:"FETCH_FAIL",payload:err})
         })
     }, [ ])
+    
     
     // -------------------------------------------------------------------------------------------------------products-------------------------------------
    useEffect(()=>{
@@ -145,6 +147,8 @@ const AppProvider = ({children})=>{
         errorSearch,
         search,
         setSearch,
+        searchResult,
+        setSearchResult,
         blogs,
         dispatchBlog,
         adminOrders,

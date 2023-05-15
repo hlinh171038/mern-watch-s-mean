@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Loading from './Loading'
 import { Alert, Button, Col, Row } from 'reactstrap'
 import { useGlobalContext } from '../context'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
 function HistoryComponent() {
@@ -10,61 +10,64 @@ function HistoryComponent() {
     const {userInfo} = carts
     const navigate = useNavigate()
     const {error,loading,orderHistory} = historys
-      
+    const [historyData,setHistoryData] = useState(null)
+    const [loadingPage,setLoadingPage] = useState(true)
     useEffect(()=>{
+      setLoadingPage(true)
         dispatchHistory({type:"FECTCH_REQUEST"})
         axios.get(`${process.env.REACT_APP_API}/api/orders/history`,
                     {headers:{authorization: `Bearer ${userInfo.token}`}})
             .then(res =>{
                 const {data } =res;
                 console.log(data)
+                setHistoryData(data)
+                setLoadingPage(false)
                 dispatchHistory({type:"FETCH_SUCCESS",payload:data})
             })
             .catch(error =>{
                 console.log(error)
                 dispatchHistory({type:"FETCH_FAIL",payload:error})
-
+                setLoadingPage(true)
             })
     },[])
   return (
     <Row className=' mt-5 mb-5'>
      <h1 className='text-center mb-5'>Order <span style={{color:"#cbba9c"}}>History</span></h1>
-      {loading ? (
+      {loadingPage ? (
         <Loading/>
-      ):error ?(
-        <Alert color="danger">{error}</Alert>
       ):(
         <Col sm={12} md={12}>
-        <table className='table'>
+        <table className='table '>
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>DATE</th>
-                    <th>TOTAL</th>
-                    <th>PAID</th>
-                    <th>DELIVERED</th>
-                    <th>ACTION</th>
+                    <th className='text-center'>ID</th>
+                    <th  className='text-center'>DATE</th>
+                    <th  className='text-center'>TOTAL</th>
+                    <th  className='text-center'>PAID</th>
+                    <th  className='text-center'>DELIVERED</th>
+                    <th  className='text-center'>ACTION</th>
                 </tr>
             </thead>
             <tbody>
               
-                    {orderHistory && orderHistory.map(item=>{
+                    {historyData && historyData.map(item=>{
                         return <tr key={item._id}>
-                            <td>{item._id}</td>
-                            <td>{item.createdAt.substring(0,10)}</td>
-                            <td>{item.totalPrice}</td>
-                            <td>No</td>
-                            <td>No</td>
-                            <td >
+                            <td  className='text-center'>{item._id}</td>
+                            <td  className='text-center'>{item.createdAt.substring(0,10)}</td>
+                            <td  className='text-center'>{item.totalPrice}</td>
+                            <td  className='text-center'>No</td>
+                            <td  className='text-center'>No</td>
+                            <td   className='text-center'>
+                            <Link to={`/placeorder/order/${item._id}`}>
                                 <button
                                 className='nav_search_btn'
                                     type="button"
                                     variant="light"
-                                    onClick={()=>{
-                                        navigate(`/placeorder/order/${item._id}`)
-                                    }}>
-                                        Detail
+                                    >
+                                       Detail
+                                        
                                     </button>
+                              </Link>
                             </td>
                         </tr>
                     })}

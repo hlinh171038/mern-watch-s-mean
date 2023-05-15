@@ -12,6 +12,7 @@ function OrderDetailComponent() {
     const {error,loading,order,isDelivered} = orders
     const {shippingAddress,paymentMethod,cart} = carts
     console.log(order)
+    console.log(id)
     useEffect(()=>{
         dispatchOrder({type:"FETCH_REQUEST"})
         axios.get(`${process.env.REACT_APP_API}/api/orders/${id}`).then(res=>{
@@ -40,7 +41,7 @@ function OrderDetailComponent() {
             <Row md={8}>
                 <Col md={12}>
                     <Card className='mb-3'>
-                        <CardBody>
+                        <CardBody >
                             <CardTitle>Shipping</CardTitle>
                             <CardText>
                             <strong>Name:</strong> {shippingAddress.fullname} <br/>
