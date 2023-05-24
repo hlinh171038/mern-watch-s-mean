@@ -12,7 +12,8 @@ import { useNavigate } from "react-router-dom";
 import reducerPostProduct from "./Reducer/ReducerBlog";
 import reducerBlog from "./Reducer/ReducerBlog";
 import reducerAdminOrder from "./Reducer/ReducerAdminOrder";
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const AppContext = React.createContext()
 
@@ -91,6 +92,18 @@ const AppProvider = ({children})=>{
        if(data.countInStock< quantity){
         window.alert('Quantity is out of stock');
         return;
+       }
+       if(data){
+        toast.info('Has Been Added To Cart', {
+            position: "top-center",
+            autoClose: 500,
+            hideProgressBar: true,
+            closeOnClick: false,
+            pauseOnHover: false,
+            draggable: false,
+            progress: undefined,
+            theme: "light",
+            });
        }
        dispatchCart({type:"ADD_TO_CART",payload:{...data,quantity}})
     }

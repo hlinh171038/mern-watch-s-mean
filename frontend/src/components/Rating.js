@@ -34,11 +34,11 @@ function Rating(props) {
                         'fas fa-star-half-alt':
                         'far fa-star'}/>
         </span>
-        <span  className='text-muted small m-1'>{numReviewer} Reviewer</span>
-        {caption ? (
-          <span>{caption}</span>
+        <span  className='text-muted small m-1'> </span>
+        {numReviewer ? (
+          <span>{' '+ numReviewer+ ' reviews'}</span>
         ):(
-          <span>{' '+ numReviewer+ 'reviews'}</span>
+          <span>{' '+ 0 + ' reviews'}</span>
         )}
     </div>
   )

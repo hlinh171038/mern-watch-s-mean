@@ -5,7 +5,8 @@ import { useGlobalContext } from '../context'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Loading from './Loading'
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function PlaceOrderCompponent() {
     const {carts,dispatchOrder,dispatchCart,orders} = useGlobalContext()
@@ -49,6 +50,16 @@ const placeOrderHandler = ()=>{
         })
         .catch (error =>{
             dispatchOrder({type:"CREATE_FAIL"})
+            toast.error(error, {
+                position: "top-center",
+                autoClose: 1000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                });
         }) 
 }
 useEffect(()=>{
@@ -58,6 +69,18 @@ useEffect(()=>{
 },[paymentMethod,navigate])
   return (
     <div className='container'>
+        <ToastContainer
+            position="top-center"
+            autoClose={1000}
+            hideProgressBar
+            newestOnTop
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+            />
       <CheckoutStep step1 step2 step3 step4/>
       <h1 className="my-3 text-center mb-5"> <span style={{color:"#cbba9c"}}>Preview</span> Order </h1>
       <Row>
@@ -105,7 +128,7 @@ useEffect(()=>{
                                             </Link>
                                         </Col>
                                         <Col md={3}>{item.quantity}</Col>
-                                        <Col md={3}>{item.price} VNĐ</Col>
+                                        <Col md={3}>{item.price && item.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} VNĐ</Col>
                                     </Row>
                                 </ListGroupItem>
                         })}
@@ -122,19 +145,19 @@ useEffect(()=>{
                         <ListGroupItem>
                             <Row>
                                 <Col>Items</Col>
-                                <Col>{carts.itemsPrice} VNĐ</Col>
+                                <Col>{carts.itemsPrice && carts.itemsPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} VNĐ</Col>
                             </Row>
                         </ListGroupItem>
                         <ListGroupItem>
                             <Row>
                                 <Col>Shipping</Col>
-                                <Col>{carts.shippingPrice} VNĐ</Col>
+                                <Col>{carts.shippingPrice && carts.shippingPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} VNĐ</Col>
                             </Row>
                         </ListGroupItem>
                         <ListGroupItem>
                             <Row>
                                 <Col>Tax</Col>
-                                <Col>{carts.taxPrice} VNĐ</Col>
+                                <Col>{carts.taxPrice && carts.taxPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} VNĐ</Col>
                             </Row>
                         </ListGroupItem>
                         <ListGroupItem>
@@ -142,7 +165,7 @@ useEffect(()=>{
                                 <Col>
                                     <strong>Order Total</strong>
                                 </Col>
-                                <Col>{carts.totalPrice} VNĐ</Col>
+                                <Col>{carts.totalPrice && carts.totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} VNĐ</Col>
                             </Row>
                         </ListGroupItem>
                         <ListGroupItem >

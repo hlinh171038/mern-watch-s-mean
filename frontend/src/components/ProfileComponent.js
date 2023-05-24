@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useGlobalContext } from '../context'
 import { Alert, Button, Form, FormGroup, Input, Label } from 'reactstrap'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import axios from 'axios'
 function ProfileComponent() {
     const {carts} = useGlobalContext()
@@ -28,6 +31,16 @@ const handleSubmit =(e) =>{
         const {data } =res
         localStorage.setItem('userInfo',JSON.stringify(data))
         setSuccess('Update is success')
+        toast.info('Update is success', {
+            position: "top-center",
+            autoClose: false,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: 1,
+            theme: "light",
+            });
     }).catch(error =>{
         console.log(error)
         setError('Email is wrong. Email must be @ and .com')

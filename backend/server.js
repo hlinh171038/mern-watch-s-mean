@@ -19,6 +19,8 @@ import User from './models/UserModel.js';
 import Order from './models/OrderModel.js';
 import Blog from './models/BlogModel.js';
 import dotenv from 'dotenv'
+import { resolveSoa } from 'dns';
+import Comment from './models/CommentModal.js';
 dotenv.config();
 
 //import productRouter from './routes/ProductRoutes.js';
@@ -167,6 +169,7 @@ app.post ('/api/product/post',uploadMiddleware.single('file'),async(req,res) =>{
    let ext = parts[parts.length -1];
     let newPath = destination + filename + '.'+ ext;
     fs.renameSync(path, newPath)
+   
     try {
         const productDoc = new Product ({
             name,
@@ -203,19 +206,23 @@ app.post ('/api/product/post',uploadMiddleware.single('file'),async(req,res) =>{
 
 // post info when fill all infomation and click order place
 app.post('/api/orders',isAuth,async(req,res)=>{
-    const {orderItems,shippingAddress,itemsPrice,paymentMethod,shippingPrice,taxPrice,totalPrice} = req.body
-    const orderDoc = new Order({
-        orderItems:orderItems.map((x) =>({...x,product:x._id})),
-        shippingAddress:shippingAddress,
-        paymentMethod:paymentMethod,
-        itemsPrice:itemsPrice,
-        shippingPrice:shippingPrice,
-        taxPrice:taxPrice,
-        totalPrice:totalPrice,
-        user:req.user._id
+    try {
+        const {orderItems,shippingAddress,itemsPrice,paymentMethod,shippingPrice,taxPrice,totalPrice} = req.body
+        const orderDoc = new Order({
+            orderItems:orderItems.map((x) =>({...x,product:x._id})),
+            shippingAddress:shippingAddress,
+            paymentMethod:paymentMethod,
+            itemsPrice:itemsPrice,
+            shippingPrice:shippingPrice,
+            taxPrice:taxPrice,
+            totalPrice:totalPrice,
+            user:req.user._id
     })
     const order= await orderDoc.save();
     res.send(order)
+    } catch (error) {
+        res.status(500).send(error)
+    }
 })
 
 //get info with user id to show in history pages
@@ -317,6 +324,35 @@ app.get('/api/blog/:id',async(req,res)=>{
         res.status(500).send(error)
     }
  })
+ //----------------------------------------------------------------comment--------------------------
+ app.post('/api/products/comment',isAuth, async(req,res)=>{
+    const {reviewItems} = req.body;
+   
+    const {_id,name} =req.user
+    
+    try {
+        const commentDoc =   new Comment({
+            reviewItems:reviewItems.map((x)=>({...x,user:_id}))
+        })
+        const  comment = await commentDoc.save();
+        res.send({
+            reviewItems:comment.reviewItems,
+            token:generateToken(comment)
+        })
+    } catch (error) {
+        res.status(500).send(error)
+    }
+    
+ })
+app.get('/api/comment',async(req,res)=>{
+    try {
+        const commentDoc = await Comment.find()
+        res.send(commentDoc)
+    } catch (error) {
+        res.status(500).send(error)
+    }
+})
+
 ////////////////////////////////////////////////////////////////////admin/////////////////////////////////////////////////
 //get orders pill 
 app.get('/api/orders',async(req,res)=>{

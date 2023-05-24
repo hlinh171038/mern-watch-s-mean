@@ -3,6 +3,8 @@ import React, { useState } from 'react'
 import {Form,FormGroup,Label,Input,Button,Alert, Row, Col} from 'reactstrap'
 import { useGlobalContext } from '../context'
 import { Link } from 'react-router-dom'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function PostProductComponent() {
    const {dispatchPostProduct} =useGlobalContext()
@@ -36,8 +38,6 @@ const priceCheck = (price <1000 || price >100000000);
                 setError('price is not sense');
                 return;
         }
-    
-   
         // REQUEST
         //dispatchPostProduct({type:"FETCH_REQUEST"})
          //data 
@@ -69,6 +69,16 @@ const priceCheck = (price <1000 || price >100000000);
                 setBrand('')
                 setDescription('')
                 setSuccess('laldla')
+                toast.warn('New product is posted, Home, refresh to see result', {
+                        position: "top-center",
+                        autoClose: false,
+                        hideProgressBar: true,
+                        closeOnClick: true,
+                        pauseOnHover: true,     
+                        draggable: true,
+                        progress: 1,
+                        theme: "light",
+                        });
         }
  
 }
@@ -78,7 +88,17 @@ const priceCheck = (price <1000 || price >100000000);
         <Row className='d-flex justify-content-center mt-5 mb-5'>
                 <h3 className='text-center'><span style={{color:"#cbba9c"}}>POST</span> PRODUCT</h3>
                 <Col md={12} sm={12} lg={4} className='  p-3 mt-5'  style={{background:"rgb(203 186 156 / 33%)"}}>
-                {success && <Alert color='success'>New product is posted, Go to <Link to='/'>Home</Link>, refresh to see result</Alert>}
+                {success && <ToastContainer
+                                position="top-center"
+                                autoClose={false}
+                                limit={1}
+                                newestOnTop
+                                closeOnClick
+                                rtl={false}
+                                pauseOnFocusLoss
+                                draggable
+                                theme="light"
+                                />}
                 {error && <Alert color='danger'>{error}</Alert>}
                 <Form onSubmit={postProduct} className='mb-5'>
                         <FormGroup>

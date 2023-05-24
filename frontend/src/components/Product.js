@@ -19,7 +19,7 @@ const {addToCart,state} =useGlobalContext()
                 </Link>
                 <Rating rating={product.rating} numReviewer = {product.numReviews}/>
                 <CardText>
-                    {product.price} VNĐ
+                    {product.price && product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} VNĐ
                 </CardText>
                 {product.countInStock === 0 ? 
                 <Button className= '  bg-light text-muted small border-0 ' style={{padding: "6px 28px"}} disabled={true}>Out Of Stock</Button>:

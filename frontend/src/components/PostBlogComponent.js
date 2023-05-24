@@ -3,6 +3,8 @@ import { Alert, Col, Form, FormGroup, Input, Row } from 'reactstrap'
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function PostBlogComponent() {
     const [value, setValue] = useState('');
@@ -27,6 +29,16 @@ function PostBlogComponent() {
         })
         if(response.ok){
             setSuccess('Your Blog is Post success');
+            toast.warn('Your Blog is Post success', {
+                position: "top-center",
+                autoClose: false,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: 1,
+                theme: "light",
+                });
             setFiles('');
             setSummary('')
             setValue('')
@@ -37,6 +49,17 @@ function PostBlogComponent() {
     }
   return (
     <Row  className='d-flex justify-content-center mt-5 mb-5'>
+        <ToastContainer
+            position="top-center"
+            autoClose={false}
+            limit={1}
+            newestOnTop
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            theme="light"
+            />
         <h3 className='text-center'><span style={{color:"#cbba9c"}}>POST</span> BLOG</h3>
         <Col  md={12} sm={12} lg={4} className='  p-3 mt-3'  style={{background:"rgb(203 186 156 / 33%)"}}>
         {success && <Alert color='success'>{success}</Alert>}

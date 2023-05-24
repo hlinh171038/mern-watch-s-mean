@@ -8,12 +8,12 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import Rating from './Rating'
 import Loading from './Loading'
 import Product from './Product'
-import Pagination from './Pagination'
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 
 const prices =[
     {
@@ -81,9 +81,29 @@ function SearchComponent() {
     for(let i=1;i <=Math.ceil(total/postPerPage);i++){
       pagesPagin.push(i);
     }
+
+    //handle pagination
+    const handlePagination =(e,p)=>{
+      console.log(e,p)
+      setCurrentPage(p)
+    }
     
     // filter 
-    const handleFilterCategory = (currentCategory) =>{
+    const handleFilterCategory = (e,currentCategory) =>{
+     console.log(e.target.id)
+     let target = e.target.id
+     
+     console.log(categories)
+     document.getElementById(`Any`).classList.remove('search_active')
+     for(let i=0;i<categories.length;i++){
+      console.log(categories[i])
+      document.getElementById(`${categories[i]}`).classList.remove('search_active')
+     }
+     if(target ==='Any'){
+      document.getElementById(`Any`).classList.add('search_active')
+     }else{
+      document.getElementById(`${target}`).classList.add('search_active')
+     }
       setCurrentPage(1)
       setResetBtn(true)
       setCategory(currentCategory)
@@ -99,7 +119,20 @@ function SearchComponent() {
       }
     }
    // price
-    const handleFilterPrice = (currentPrice) =>{
+    const handleFilterPrice = (e,currentPrice) =>{
+      console.log(e.target.id)
+      let target = e.target.id
+     document.getElementById(`AnyPrice`).classList.remove('search_active')
+      for(let i=0;i<prices.length;i++){
+        console.log(prices[i].value)
+        document.getElementById(`${prices[i].value}`).classList.remove('search_active')
+      }
+      if(target ==='AnyPrice'){
+        document.getElementById(`AnyPrice`).classList.add('search_active')
+      }else{
+        document.getElementById(`${target}`).classList.add('search_active')
+      }
+     
       setCurrentPage(1)
       setResetBtn(true)
       setPrice(currentPrice)
@@ -135,6 +168,18 @@ function SearchComponent() {
    
     //order
     const handleOrder = (e) =>{
+      //remove categories
+      document.getElementById(`Any`).classList.remove('search_active')
+      for(let i=0;i<categories.length;i++){
+        console.log(categories[i])
+        document.getElementById(`${categories[i]}`).classList.remove('search_active')
+       }
+      document.getElementById(`AnyPrice`).classList.remove('search_active')
+       for(let i=0;i<prices.length;i++){
+        console.log(prices[i].value)
+        document.getElementById(`${prices[i].value}`).classList.remove('search_active')
+      }
+      //sort
       setCurrentPage(1)
       setResetBtn(true)
       let orderValue = e.target.value;
@@ -188,12 +233,23 @@ function SearchComponent() {
       setRating('Any')
       setProductData(rootData)
       setResetBtn(false)
+      document.getElementById(`Any`).classList.remove('search_active')
+      for(let i=0;i<categories.length;i++){
+        console.log(categories[i])
+        document.getElementById(`${categories[i]}`).classList.remove('search_active')
+       }
+      document.getElementById(`AnyPrice`).classList.remove('search_active')
+       for(let i=0;i<prices.length;i++){
+        console.log(prices[i].value)
+        document.getElementById(`${prices[i].value}`).classList.remove('search_active')
+      }
     }
   
 // handle close error
     const handleCloseX = ()=>{
       setError('')
       setProductData(rootData)
+     
     }
 
     useEffect(()=>{
@@ -209,13 +265,14 @@ function SearchComponent() {
       }).catch (err=>{
           dispatchSearch({type:"FETCH_FAIL",payload:err})
       })
-  }, [ ])
+  }, [])
 
     useEffect(()=>{
         axios.get(`${process.env.REACT_APP_API}/api/products/catagories`)
              .then(res =>{
                 const {data } =res
                 setCategories(data)
+               
              }).catch(error=>{
                 console.log(error)
              })
@@ -230,16 +287,28 @@ function SearchComponent() {
     },[searchResult])
   return (
       <Row  className='' >
+         <div className="about_container_img bg-image">
+            <img src ="https://images.pexels.com/photos/1841841/pexels-photo-1841841.jpeg?auto=compress&cs=tinysrgb&w=600" 
+            className='w-100 h-100 img-fluid shadow-2-strong hover-shadow'/>
+            <div className='mask' style={{ backgroundColor: 'rgba(0, 0, 0, 0.6)' }}>
+                <div className='d-flex justify-content-center align-items-center h-100'>
+                <div className='d-flex justify-content-center flex-column align-items-center'>
+                    <p className='text-white mb-0 text-uppercase fs-4 fw-bold'>Products</p>
+                    <p className='text-white mb-0 text-uppercase mt-3'>Home Page / <strong style={{color:"#cbba9c"}}>Products</strong></p>
+                </div>
+                </div>
+            </div>
+        </div>
         <Col md={3} className=' ' style={{minHeight:"100vh",background:"rgba(203, 186, 156, 0.33)"}}>
             <h3 className='my-3 text-dark ms-3 fw-bold'>Department</h3>
             <div >
                 <ul>
                     <li >
-                        <div onClick={()=>handleFilterCategory('Any')} className=' h3hover'>Any</div>
+                        <div onClick={(e)=>handleFilterCategory(e,'Any')} className=' ' id="Any">Any</div>
                     </li>
                     {categories.map((currentCate)=>{
                         return <li key={currentCate}>
-                           <div onClick={()=>handleFilterCategory(currentCate)} className=' h3hover'>{currentCate}</div>
+                           <div onClick={(e)=>handleFilterCategory(e,currentCate)} className='text-capitalize ' id={currentCate}>{currentCate}</div>
                         </li>
                     })}
                 </ul>
@@ -248,14 +317,16 @@ function SearchComponent() {
                 <h3  className='my-3 text-dark ms-3 fw-bold'>Price</h3>
                 <ul>
                     <li>
-                        <div onClick={() =>handleFilterPrice("Any")}
-                              className=' h3hover'
+                        <div onClick={(e) =>handleFilterPrice(e,"AnyPrice")}
+                              className=''
+                              id="AnyPrice"
                         >Any</div>
                     </li>
                     {prices.map((p)=>{
                         return <li key={p.value}>
-                                <div onClick={()=>handleFilterPrice(p.value)}
-                                      className=' h3hover'
+                                <div onClick={(e)=>handleFilterPrice(e,p.value)}
+                                      id={p.value}
+                                      className=''
                                      >
                                       {p.name}
                                 </div>
@@ -290,49 +361,24 @@ function SearchComponent() {
                   </div>}
               </Col>
               <Col className="text-end d-flex justify-content-center align-items-center " md={3} sm={3} style={{minWidth:"300px",marginRight:"1rem"}}>
-                  {/* Sort by{' '}
-                  <select className='my-3'
-                    onChange={handleOrder}
-                  >
-                    <option value="newest">Newest Arrivals</option>
-                    <option value="lower">Price: Low to High</option>
-                    <option  value="higher">Price: High to Low</option>
-                    <option value="avg">Avg. Customer Reviews</option>
-                  </select> */}
                   <div className='sort_container w-100 mt-3'>
-                    <FormControl fullWidth>
-                    <InputLabel id="demo-simple-select-label">Sort</InputLabel>
-                    <Select  
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
+                    <select
+                      className='search_select'
                       value={sort}
-                      label="Sort "
                       onChange={handleOrder}
-                    
                     >
-                      <MenuItem  value="newest">Newest Arrivals</MenuItem>
-                      <MenuItem value="lower">Price: Low to High</MenuItem>
-                      <MenuItem value="higher">Price: High to Low</MenuItem>
-                      <MenuItem value="avg">Avg. Customer Reviews</MenuItem>
-                    </Select>
-                  </FormControl>
+                      <option value="newest">Newest Arrivals</option>
+                      <option value="lower">Price: Low to High</option>
+                      <option  value="higher">Price: High to Low</option>
+                      <option value="avg">Avg. Customer Reviews</option>
+                    </select>
                   </div>
-                 
-                
               </Col>
-           
             </Row>
             <Row className='p-3'>
               <Col md={12} sm={12}>
               <h1 className='text-center'><span style={{color:"#cbba9c"}}>Featured</span> Products</h1>
-                {/* {loading ?<Loading/>:(error  ?<div>{error}</div>: */}
                <Row  className='mt-3'>
-                  {/* { errorSearch ?<Alert color='danger'>{errorSearch}</Alert>:productFilter.length !==0 ?
-                   productFilter.slice(firstIndex,lastIndex).map(product =>{
-                    return <Product key={product._id} {...product}/>
-                  }):searchProduct.slice(firstIndex,lastIndex).map(product=>{
-                    return <Product  key={product._id} {...product}/>
-                  })} */}
                     { errorSearch ?
                     <Alert color='danger' className='p-0 d-flex justify-content-between'>
                       <span className='ms-3'>{errorSearch}</span> <button onClick={handleCloseX} className='admin_cancel me-1'>
@@ -343,16 +389,9 @@ function SearchComponent() {
                    productData && productData.slice(firstIndex,lastIndex).map(product =>{
                     return <Product key={product._id} {...product}/>
                   })}
-                 <nav aria-label="Page navigation example">
-                  <ul class="pagination">
-                      <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-
-                          {pagesPagin.map(page =>{
-                              return <li class="page-item"><a class="page-link" onClick={() =>setCurrentPage(page)}>{page}</a></li>
-                          })}
-                      <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                  </ul>
-                  </nav>
+                 <Stack spacing={2} className="mt-3 mb-3">
+                  <Pagination count={pagesPagin.length} variant="outlined" shape="rounded"  onChange={handlePagination}/>
+                </Stack>
               </Row>
               {/* )} */}
               </Col>

@@ -10,6 +10,8 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 
 function AdminUserInfoComponent() {
     const [userInfo,setUserInfo] = useState([])
@@ -33,6 +35,13 @@ function AdminUserInfoComponent() {
     for(let i=0;i<Math.ceil(orderClone.length/numPerPage) ;i++){
         pagin.push(i)
     }
+
+    //handle pagination
+    const handlePagination =(e,p)=>{
+      console.log(e,p)
+      setCurrentPage(p)
+    }
+
     //search 
     const handleSearch =(e) =>{
       e.preventDefault();
@@ -108,8 +117,6 @@ function AdminUserInfoComponent() {
          setOrderClone([]);return;
      }
     };
-  
-    
 
     useEffect(()=>{
         axios.get(process.env.REACT_APP_API+'/api/orders',
@@ -136,7 +143,6 @@ function AdminUserInfoComponent() {
               })
     },[])
   return (
-    
       <Row className='admin_userInfo_row  p-3'>
         <Col md={12} className='d-flex justify-content-between align-items-center mt-3 mb-5'>
           <div className='admin_search_container d-flex jsutify-content-center'>
@@ -155,22 +161,15 @@ function AdminUserInfoComponent() {
                   </span>}
               </div>
           </div>
-          <div className='admin_sort_container w-25' >
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">Sort</InputLabel>
-            <Select  
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
+          <div className='admin_sort_container ' >
+          <select
+             className='search_select comment_form_control'
               value={sort}
-              label="Sort "
-              onChange={handleChange}
-             
-            >
-              <MenuItem value='lastest' > Latest Day</MenuItem>
-              <MenuItem value='oldest'>Oldest Day</MenuItem>
-              
-            </Select>
-          </FormControl>
+             onChange={handleChange}
+           >
+            <option value="lastest">Latest Day </option>
+            <option value="oldest">Oldest Day</option>  
+           </select>
           </div>
         </Col>
         <Col sm={12} md={12} lg={12}  style={{height:"auto",minHeight:"400px"}}>
@@ -193,13 +192,11 @@ function AdminUserInfoComponent() {
                             <td  className='text-center'>{ userScreen(item.user) &&  userScreen(item.user).name}</td>
                             <td  className='text-center'>{ format(new Date(item.createdAt), 'dd-MM-yyyy HH-mm-ss')}</td>
                             <td className='text-center'>{item.orderItems.length}</td>
-                            <td  className='text-center'>{item.totalPrice} vnd</td>
+                            <td  className='text-center'>{item.totalPrice && item.totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} VNĐ</td>
                             <td  className='text-center'>{item.shippingAddress.address},{item.shippingAddress.city}</td>
                             <td  className='text-center pt-3 pb-3'>
-                                <Link  to={`/dashboard/${item._id}`} className='text-decoration-none text-light nav_search_btn ' >
-                                      
-                                          Detail
-                                       
+                                <Link  to={`/dashboard/${item._id}`} className='text-decoration-none text-light nav_search_btn ' >                                   
+                                  Detail
                                 </Link> 
                             </td>
                         </tr>
@@ -208,15 +205,9 @@ function AdminUserInfoComponent() {
            </table>
           
         </Col>
-        <nav aria-label="Page navigation example">
-              <ul class="pagination">
-                <li class="page-item"><a class="page-link" >Previous</a></li>
-                  {pagin.map(item =>{
-                    return <li class="page-item"><a class="page-link"  onClick={()=>setCurrentPage(item+1)}>{item+1}</a></li>
-                  })}
-                <li class="page-item"><a class="page-link" >Next</a></li>
-              </ul>
-            </nav>
+          <Stack spacing={2} className="mt-3 mb-3">
+            <Pagination count={pagin.length} variant="outlined" shape="rounded"  onChange={handlePagination}/>
+          </Stack>
     </Row>
     
   )

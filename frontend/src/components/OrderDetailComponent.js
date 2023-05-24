@@ -4,6 +4,8 @@ import { useGlobalContext } from '../context'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
 import { Alert, Card, CardBody, CardText, CardTitle, Col, ListGroup, ListGroupItem, Row } from 'reactstrap'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function OrderDetailComponent() {
     const {dispatchOrder,orders,carts} = useGlobalContext()
@@ -19,6 +21,16 @@ function OrderDetailComponent() {
             console.log(res.data)
             const {data} = res
             dispatchOrder({type:"FETCH_SUCCESS",payload:data})
+            toast.info('your order is success', {
+                position: "top-center",
+                autoClose: 1000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                });
 
         }).catch(error =>{
             console.log(error)
@@ -39,6 +51,18 @@ function OrderDetailComponent() {
             <h1 className='my-3 text-center'>ORDER - {id}</h1>
             <span className='mt-1 mb-3'>Your Product is bought, see<Link to="/orderhistory"> Order History</Link></span>
             <Row md={8}>
+            <ToastContainer
+                position="top-center"
+                autoClose={1000}
+                hideProgressBar
+                newestOnTop
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+                />
                 <Col md={12}>
                     <Card className='mb-3'>
                         <CardBody >
@@ -81,7 +105,7 @@ function OrderDetailComponent() {
                                                     <span>{item.name}</span>
                                                    </Col>
                                                 <Col md={3}>{item.quantity}</Col>
-                                                <Col md={3}>{item.price} VNĐ</Col>
+                                                <Col md={3}>{item.price && item.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} VNĐ</Col>
                                             </Row>
                                         </ListGroupItem>
                                 })}
@@ -95,19 +119,19 @@ function OrderDetailComponent() {
                         <ListGroupItem>
                             <Row>
                                 <Col>Items</Col>
-                                <Col>{order.itemsPrice} VNĐ</Col>
+                                <Col>{order.itemsPrice && order.itemsPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} VNĐ</Col>
                             </Row>
                         </ListGroupItem>
                         <ListGroupItem>
                             <Row>
                                 <Col>Shipping</Col>
-                                <Col>{order.shippingPrice} VNĐ</Col>
+                                <Col>{order.shippingPrice && order.shippingPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} VNĐ</Col>
                             </Row>
                         </ListGroupItem>
                         <ListGroupItem>
                             <Row>
                                 <Col>Tax</Col>
-                                <Col>{order.taxPrice} VNĐ</Col>
+                                <Col>{order.taxPrice && order.taxPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} VNĐ</Col>
                             </Row>
                         </ListGroupItem>
                         <ListGroupItem>
@@ -115,7 +139,7 @@ function OrderDetailComponent() {
                                 <Col>
                                     <strong>Order Total</strong>
                                 </Col>
-                                <Col>{order.totalPrice} VNĐ</Col>
+                                <Col>{order.totalPrice && order.totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} VNĐ</Col>
                             </Row>
                         </ListGroupItem>
                     </ListGroup>

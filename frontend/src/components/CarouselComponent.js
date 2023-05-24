@@ -37,13 +37,13 @@ function MultipleItems () {
       infinite: true,
       speed: 500,
       slidesToShow: 3,
-      slidesToScroll: 3,
+      slidesToScroll: 1,
       responsive: [
         {
           breakpoint: 1700,
           settings: {
             slidesToShow: 3,
-            slidesToScroll: 3,
+            slidesToScroll: 1,
             infinite: true,
             dots: true
           }
@@ -52,7 +52,7 @@ function MultipleItems () {
           breakpoint:1200,
           settings: {
             slidesToShow: 2,
-            slidesToScroll: 2,
+            slidesToScroll: 1,
             initialSlide: 2
           }
         },
@@ -69,7 +69,7 @@ function MultipleItems () {
         <Row className="carousel_container ">
             <div className="carousel_cover"></div>
             <Row  >
-                <Col sm={12}>
+                <Col sm={12} className="mb-5">
                     <div className="container">
                     <h2 className="text-white text-center mt-3 mb-3"> Our Blog</h2>
                     <Slider {...settings} className="">
