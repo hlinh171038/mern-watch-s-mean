@@ -1,4 +1,8 @@
-- Project title: WATCH'S MAN SHOP
+- 🔥 MY WATCH'S MAN SHOP
+
+![Alt text](image.png)
+Description 
+Ecommecial website with a simple feature for user to buy the watch and help admin manager their web
 
 - Github: https://github.com/hlinh171038/mern-amazoma-app
 
