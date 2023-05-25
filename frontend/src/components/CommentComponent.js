@@ -10,7 +10,8 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { compareAsc, format } from 'date-fns'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 
 function CommentComponent(...product) {
     const {carts } = useGlobalContext()
@@ -58,7 +59,12 @@ function CommentComponent(...product) {
     for (let i=0;i<Math.ceil(total.length/countPerPage);i++){
         pagin.push(i)
     }
-    console.log(tatalItem/countPerPage)
+   
+     //handle pagination
+     const handlePagination =(e,p)=>{
+        console.log(e,p)
+        setCurrentPage(p)
+      }
     // handle to chose the star
     const handleReview =(e)=>{
         console.log(e.target.id)
@@ -316,16 +322,9 @@ function CommentComponent(...product) {
             // }
             })}
            </div>
-
-        <nav aria-label="Page navigation example">
-              <ul class="pagination">
-                <li class="page-item"><a class="page-link" >Previous</a></li>
-                  {pagin.map(item =>{
-                    return <li class="page-item"><a class="page-link"  onClick={()=>setCurrentPage(item+1)}>{item+1}</a></li>
-                  })}
-                <li class="page-item"><a class="page-link" >Next</a></li>
-              </ul>
-            </nav>
+           <Stack spacing={2} className="mt-3 mb-3">
+            <Pagination count={pagin.length} variant="outlined" shape="rounded"  onChange={handlePagination}/>
+          </Stack>
         </div>
             }       
     </div>
